@@ -3,5 +3,10 @@
     "api/*.go": {
       "runtime": "go"
     }
+  },
+  "build": {
+    "env": {
+      "GO_BUILD_FLAGS": "-ldflags '-s -w'"
+    }
   }
 }
