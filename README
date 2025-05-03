@@ -1,0 +1,135 @@
+# VibeGoGo
+
+A RESTful API server built with Go, Gin, GORM, and PostgreSQL for user and post management.
+
+## Prerequisites
+
+- Go 1.20+ installed
+- PostgreSQL running locally or accessible remotely
+- (Optional) [Air](https://github.com/cosmtrek/air) for hot-reloading during development
+
+## Getting Started
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/yourusername/VibeGoGo.git
+cd VibeGoGo
+```
+
+### 2. Configure Environment Variables
+
+Copy the `.env` file and update it with your database credentials and JWT secret:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` as needed:
+```
+DB_HOST=localhost
+DB_USER=postgres
+DB_PASSWORD=password
+DB_NAME=blog-go
+DB_PORT=5432
+PORT=8080
+DATABASE_URL=postgresql://username:password@localhost:5432/go-vibe?sslmode=disable
+JWT_SECRET=your-secret-key
+```
+
+### 3. Install Dependencies
+
+```bash
+go mod tidy
+```
+
+### 4. Run Database Migrations
+
+The app will auto-migrate the schema on startup. Ensure your PostgreSQL server is running and the credentials in `.env` are correct.
+
+### 5. Run the Application
+
+#### Development (with hot reload using Air):
+
+```bash
+air
+```
+
+#### Production:
+
+```bash
+go build -o vibegogo ./cmd/api
+./vibegogo
+```
+
+The server will start on the port specified in your `.env` (default: 8080).
+
+### 6. API Usage
+
+- All endpoints are prefixed with `/api`
+- Register: `POST /api/users/register`
+- Login: `POST /api/users/login`
+- Authenticated endpoints require a JWT in the `Authorization: Bearer <token>` header
+
+## Security Features
+
+VibeGoGo implements several security features to protect your application and its users:
+
+- **Password Hashing:** User passwords are securely hashed using bcrypt before storage.
+- **JWT Authentication:** All protected endpoints require a valid JWT token. Tokens are signed with a secret key and have an expiration time.
+- **Input Validation:** All incoming requests are validated using Gin’s binding and validation tags to prevent malformed or malicious data.
+- **Authorization:** Users can only access and modify their own resources (e.g., posts, profiles).
+- **Environment Variables:** Sensitive configuration (database credentials, JWT secret) is managed via environment variables and not hardcoded.
+
+### Recommendations for Further Security
+
+- **HTTPS:** Deploy behind a reverse proxy (like Nginx) with HTTPS enabled to encrypt traffic.
+- **Rate Limiting:** Implement rate limiting middleware to prevent brute-force attacks.
+- **CORS:** Configure CORS policies to restrict which domains can access your API.
+- **CSRF Protection:** For web clients, consider CSRF protection strategies.
+- **Security Headers:** Add middleware to set HTTP security headers (e.g., Content-Security-Policy, X-Frame-Options).
+- **Audit Logging:** Log authentication attempts and sensitive actions for monitoring.
+- **Dependency Updates:** Regularly update dependencies to patch vulnerabilities.
+
+## Folder Structure
+
+```
+VibeGoGo/
+├── cmd/
+│   └── api/                # Application entry point (main.go)
+├── internal/
+│   ├── config/             # Configuration and DB connection logic
+│   ├── domain/             # Domain models (User, Post, etc.)
+│   ├── handler/            # HTTP handlers for API endpoints
+│   ├── middleware/         # Gin middleware (auth, logger, etc.)
+│   ├── repository/         # Data access layer (interfaces and implementations)
+│   └── service/            # Business logic layer
+├── pkg/
+│   └── logger/             # Custom logger setup and utilities
+├── .env                    # Environment variables
+├── .air.toml               # Air config for hot reload (development)
+├── go.mod                  # Go module definition
+├── go.sum                  # Go dependencies checksum
+└── README.md               # Project documentation
+```
+
+### Key Components
+
+- **cmd/api/main.go**: Application entry point, sets up routes, middleware, and starts the server.
+- **internal/domain**: Contains core business models.
+- **internal/handler**: HTTP handlers for user and post endpoints.
+- **internal/service**: Business logic for users and posts.
+- **internal/repository**: Interfaces and implementations for data persistence.
+- **internal/middleware**: Authentication and logging middleware for Gin.
+- **pkg/logger**: Colorful, structured logging utilities.
+- **.env**: Configuration for database and JWT secret.
+
+## Building for Production
+
+```bash
+go build -o vibegogo ./cmd/api
+```
+
+## License
+
+MIT

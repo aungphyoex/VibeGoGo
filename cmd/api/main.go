@@ -27,6 +27,9 @@ func main() {
     router := gin.Default()
     router.Use(middleware.LoggerMiddleware())
 
+    // Index route for API specification
+    router.GET("/", handler.Index)
+
     // Initialize database connection
     db, err := config.NewDBConnection()
     if err != nil {
